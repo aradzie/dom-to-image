@@ -8,10 +8,3 @@ out/
 # Other
 node_modules/
 tmp/
-.vscode/
-.idea/
-.cache/
-*.log
-*.tgz
-*.tsbuildinfo
-*~

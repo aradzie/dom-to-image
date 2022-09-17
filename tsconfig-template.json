@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "es2020",
+    "lib": [ "es2020", "dom", "dom.iterable" ],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "importHelpers": true,
+    "importsNotUsedAsValues": "remove",
+    "inlineSources": true,
+    "strict": true
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
