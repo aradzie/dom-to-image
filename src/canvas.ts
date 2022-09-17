@@ -1,11 +1,12 @@
 import { detachedClone, toSvgDataUrl } from "./svg.js";
 import { Options } from "./types.js";
-import { canvasToBlob, makeImage } from "./util.js";
+import { canvasToBlob, makeImage, toElement } from "./util.js";
 
 export const toCanvas = async (
-  element: Element,
+  selector: Element | string,
   options: Options,
 ): Promise<HTMLCanvasElement> => {
+  const element = toElement(selector);
   const { width: defaultWidth, height: defaultHeight } =
     element.getBoundingClientRect();
   const {
@@ -30,8 +31,10 @@ export const toCanvas = async (
 };
 
 export const toBlob = async (
-  element: Element,
+  selector: Element | string,
   options: Options,
+  type?: string,
+  quality?: any,
 ): Promise<Blob> => {
-  return await canvasToBlob(await toCanvas(element, options));
+  return await canvasToBlob(await toCanvas(selector, options), type, quality);
 };

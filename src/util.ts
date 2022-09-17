@@ -1,6 +1,18 @@
 import { impl } from "./options.js";
 import { DataUrl, parseDataUrl } from "./urls.js";
 
+export const toElement = (selector: Element | string): Element => {
+  if (typeof selector === "string") {
+    const element = document.querySelector<Element>(selector);
+    if (element == null) {
+      throw new Error(`Element [${selector}] not found.`);
+    }
+    return element;
+  } else {
+    return selector;
+  }
+};
+
 export const escapeRegExp = (value: string): string =>
   value.replace(/([.*+?^${}()|[\]/\\])/g, "\\$1");
 
