@@ -70,7 +70,7 @@ function clonePseudoElement(
   if ((styles.get("content") ?? "") === "") {
     return;
   }
-  const className = uid();
+  const className = `cls-${uid()}`;
   clone.classList.add(className);
   const cssProps = [...styles.entries()]
     .map(([name, value]) => `${name}:${value}`)
