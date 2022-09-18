@@ -1,27 +1,17 @@
 import { assets } from "./assets.js";
-import { inlineUrls } from "./inliner.js";
+import { inlineStyleUrls } from "./inliner.js";
 import { formatDataUrl, isDataUrl } from "./urls.js";
-import { readBlobAsDataUrl, styleOf } from "./util.js";
+import { readBlobAsDataUrl } from "./util.js";
 
-export async function inlineImages(node: Node): Promise<void> {
-  if (node instanceof Element) {
-    await inlineBackground(node);
-    if (node instanceof HTMLImageElement) {
-      return await inlineImage(node);
-    } else {
-      for (const child of node.childNodes) {
-        await inlineImages(child);
+export async function inlineImages(element: Element): Promise<void> {
+  await inlineStyleUrls(element);
+  if (element instanceof HTMLImageElement) {
+    return await inlineImage(element);
+  } else {
+    for (const child of element.childNodes) {
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        await inlineImages(child as Element);
       }
-    }
-  }
-}
-
-async function inlineBackground(element: Element): Promise<void> {
-  const style = styleOf(element);
-  for (const name of ["background"]) {
-    const value = style.getPropertyValue(name);
-    if (value !== "" && value !== "none") {
-      style.setProperty(name, await inlineUrls(value, null));
     }
   }
 }

@@ -6,11 +6,23 @@ import {
   resolveUrl,
   urlToRegex,
 } from "./urls.js";
-import { readBlobAsDataUrl } from "./util.js";
+import { readBlobAsDataUrl, styleOf } from "./util.js";
+
+export async function inlineStyleUrls(element: Element): Promise<void> {
+  const style = styleOf(element);
+  const { length } = style;
+  for (let i = 0; i < length; i++) {
+    const name = style.item(i);
+    const value = style.getPropertyValue(name);
+    if (value !== "") {
+      style.setProperty(name, await inlineUrls(value));
+    }
+  }
+}
 
 export const inlineUrls = async (
   content: string,
-  baseUrl: string | null,
+  baseUrl: string | null = null,
 ): Promise<string> => {
   const inlineUrl = async (content: string, url: string) => {
     const resolvedUrl = baseUrl ? resolveUrl(url, baseUrl) : url;

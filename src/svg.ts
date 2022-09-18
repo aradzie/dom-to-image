@@ -52,7 +52,7 @@ export const detachedClone = async (
   }
   await inlineImages(clone);
   await embedFonts(clone);
-  const style = styleOf(element);
+  const style = styleOf(clone);
   positionElement(style);
   styleElement(style, options);
   return clone;
