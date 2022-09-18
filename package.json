@@ -1,6 +1,6 @@
 {
   "name": "@sosimple/dom-to-image",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Generates an image from a DOM node using HTML5 canvas and SVG.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
