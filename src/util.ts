@@ -13,6 +13,26 @@ export const toElement = (selector: Element | string): Element => {
   }
 };
 
+export const elementSize = (element: Element): [number, number] => {
+  const { scrollWidth, scrollHeight } = element;
+  const style = getComputedStyle(element);
+  const pixelSizeOf = (name: string): number => {
+    const value = style.getPropertyValue(name);
+    if (value !== "" && value.endsWith("px")) {
+      return Number.parseFloat(value.substring(0, value.length - 2));
+    } else {
+      return 0;
+    }
+  };
+  const borderLeftWidth = pixelSizeOf("border-left-width");
+  const borderRightWidth = pixelSizeOf("border-right-width");
+  const borderTopWidth = pixelSizeOf("border-top-width");
+  const borderBottomWidth = pixelSizeOf("border-bottom-width");
+  const width = scrollWidth + borderLeftWidth + borderRightWidth;
+  const height = scrollHeight + borderTopWidth + borderBottomWidth;
+  return [width, height];
+};
+
 export const escapeRegExp = (value: string): string =>
   value.replace(/([.*+?^${}()|[\]/\\])/g, "\\$1");
 

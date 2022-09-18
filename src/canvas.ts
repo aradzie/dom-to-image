@@ -1,16 +1,15 @@
 import { detachedClone, toSvgDataUrl } from "./svg.js";
 import { Options } from "./types.js";
-import { canvasToBlob, makeImage, toElement } from "./util.js";
+import { canvasToBlob, elementSize, makeImage, toElement } from "./util.js";
 
 export const toCanvas = async (
   selector: Element | string,
   options: Options,
 ): Promise<HTMLCanvasElement> => {
   const element = toElement(selector);
-  const { width: defaultWidth, height: defaultHeight } =
-    element.getBoundingClientRect();
-  const width = options.width ?? Math.round(defaultWidth);
-  const height = options.height ?? Math.round(defaultHeight);
+  const [defaultWidth, defaultHeight] = elementSize(element);
+  const width = options.width ?? defaultWidth;
+  const height = options.height ?? defaultHeight;
   const scale = options.scale ?? 1;
   const backgroundColor = options.backgroundColor ?? null;
   const clone = await detachedClone(element, options);
