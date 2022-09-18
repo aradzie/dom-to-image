@@ -18,7 +18,10 @@ module.exports = {
   rules: {
     "eqeqeq": ["error", "always", { null: "never" }],
     "no-constant-condition": ["error", { checkLoops: false }],
+    "no-implicit-coercion": "error",
+    "no-restricted-globals": ["error", ...require("eslint-restricted-globals")],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-namespace": "off",
+    "@typescript-eslint/no-unused-vars": "off",
   },
 };
