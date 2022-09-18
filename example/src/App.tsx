@@ -4,6 +4,7 @@ import styles from "./App.module.css";
 import { Area } from "./area/Area.js";
 import defaultSrc from "./assets/checkerboard.png";
 import { Preview } from "./Preview.js";
+import { ref } from "./util.js";
 
 export const App = (): ReactElement => {
   const areaRef = createRef<HTMLDivElement>();
@@ -11,26 +12,20 @@ export const App = (): ReactElement => {
   const [src, setSrc] = useState(defaultSrc);
   const [status, setStatus] = useState("Working...");
   useEffect(() => {
-    const area = areaRef.current;
-    const preview = previewRef.current;
-    if (area != null && preview != null) {
-      toBlob(area, {})
-        .then((blob) => {
-          setSrc(URL.createObjectURL(blob));
-          setStatus("Screenshot created successfully.");
-        })
-        .catch((error) => {
-          console.error(error);
-          setStatus(String(error));
-        });
-    }
+    toBlob(ref(areaRef), {})
+      .then((blob) => {
+        setSrc(URL.createObjectURL(blob));
+        setStatus("Screenshot created successfully.");
+      })
+      .catch((error) => {
+        console.error(error);
+        setStatus(String(error));
+      });
   }, []);
   const reportSizes = () => {
-    const area = areaRef.current;
-    const preview = previewRef.current;
-    if (area != null && preview != null) {
-      const areaRect = area.getBoundingClientRect();
-      const previewRect = preview.getBoundingClientRect();
+    if (src !== defaultSrc) {
+      const areaRect = ref(areaRef).getBoundingClientRect();
+      const previewRect = ref(previewRef).getBoundingClientRect();
       console.log("Element size:", areaRect.width, areaRect.height);
       console.log("Screenshot size:", previewRect.width, previewRect.height);
     }

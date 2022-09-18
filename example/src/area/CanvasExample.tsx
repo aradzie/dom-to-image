@@ -1,20 +1,22 @@
 import { ReactElement, useEffect, useRef } from "react";
+import { ref } from "../util.js";
 import styles from "./CanvasExample.module.css";
 
 export const CanvasExample = (): ReactElement => {
-  const ref = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    const canvas = ref.current;
-    if (canvas == null) {
-      return;
-    }
-    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const ctx = ref(canvasRef).getContext("2d") as CanvasRenderingContext2D;
     ctx.font = "1rem sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("This is canvas", 100, 50);
   }, []);
   return (
-    <canvas ref={ref} className={styles.canvas} width={200} height={100} />
+    <canvas
+      ref={canvasRef}
+      className={styles.canvas}
+      width={200}
+      height={100}
+    />
   );
 };
