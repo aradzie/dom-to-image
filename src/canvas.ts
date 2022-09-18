@@ -9,12 +9,10 @@ export const toCanvas = async (
   const element = toElement(selector);
   const { width: defaultWidth, height: defaultHeight } =
     element.getBoundingClientRect();
-  const {
-    width = defaultWidth,
-    height = defaultHeight,
-    scale = 1,
-    backgroundColor = null,
-  } = options;
+  const width = options.width ?? Math.round(defaultWidth);
+  const height = options.height ?? Math.round(defaultHeight);
+  const scale = options.scale ?? 1;
+  const backgroundColor = options.backgroundColor ?? null;
   const clone = await detachedClone(element, options);
   const image = await makeImage(toSvgDataUrl(clone, width, height));
   const canvas = document.createElement("canvas");

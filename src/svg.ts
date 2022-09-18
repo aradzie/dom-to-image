@@ -5,8 +5,7 @@ import { Options } from "./types.js";
 import { formatDataUrl } from "./urls.js";
 import { escapeUrlData, styleOf } from "./util.js";
 
-export const positionElement = (element: Element): void => {
-  const style = styleOf(element);
+export const positionElement = (style: CSSStyleDeclaration): void => {
   for (const name of [
     "inset",
     "inset-block",
@@ -25,19 +24,21 @@ export const positionElement = (element: Element): void => {
   style.setProperty("inset", "0px");
 };
 
-export const styleElement = (element: Element, options: Options): void => {
-  const style = styleOf(element);
-  if (options.width != null) {
-    style.width = `${options.width}px`;
+export const styleElement = (
+  style: CSSStyleDeclaration,
+  { width, height, backgroundColor, style: styleProps }: Options,
+): void => {
+  if (width != null) {
+    style.width = `${width}px`;
   }
-  if (options.height != null) {
-    style.height = `${options.height}px`;
+  if (height != null) {
+    style.height = `${height}px`;
   }
-  if (options.backgroundColor != null) {
-    style.backgroundColor = options.backgroundColor;
+  if (backgroundColor != null) {
+    style.backgroundColor = backgroundColor;
   }
-  if (options.style != null) {
-    Object.assign(style, options.style);
+  if (styleProps != null) {
+    Object.assign(style, styleProps);
   }
 };
 
@@ -45,17 +46,15 @@ export const detachedClone = async (
   element: Element,
   options: Options,
 ): Promise<Element> => {
-  const clone = await cloneElement(element, {
-    cloner: options.cloner ?? null,
-    filter: options.filter ?? null,
-  });
+  const clone = await cloneElement(element, options);
   if (clone == null) {
     throw new Error("Cannot clone the root element.");
   }
   await inlineImages(clone);
   await embedFonts(clone);
-  positionElement(clone);
-  styleElement(clone, options);
+  const style = styleOf(element);
+  positionElement(style);
+  styleElement(style, options);
   return clone;
 };
 

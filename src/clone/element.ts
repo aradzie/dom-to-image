@@ -1,4 +1,4 @@
-import { Cloner, Filter } from "../types.js";
+import { Options } from "../types.js";
 import { uid } from "../uid.js";
 import { makeImage } from "../util.js";
 import { postprocess } from "./fix.js";
@@ -6,20 +6,15 @@ import { copyStyles, getStyles, Pseudo } from "./styles.js";
 
 const unsupported = new Set(["IFRAME", "OBJECT", "EMBED", "VIDEO", "AUDIO"]);
 
-type Context = {
-  readonly cloner: Cloner | null;
-  readonly filter: Filter | null;
-};
-
 export async function cloneElement(
   element: Element,
-  context: Context,
+  options: Options,
 ): Promise<Element | null> {
-  const clone = await shallowCloneElement(element, context);
+  const clone = await shallowCloneElement(element, options);
   if (clone != null) {
     clonePseudoElement(element, clone, ":before");
     clonePseudoElement(element, clone, ":after");
-    await cloneChildren(element, clone, context);
+    await cloneChildren(element, clone, options);
     copyStyles(element, clone);
     postprocess(element, clone);
   }
@@ -28,9 +23,9 @@ export async function cloneElement(
 
 async function shallowCloneElement(
   element: Element,
-  context: Context,
+  options: Options,
 ): Promise<Element | null> {
-  const { cloner, filter } = context;
+  const { cloner, filter } = options;
   if (cloner != null) {
     const clone = await cloner(element);
     if (clone != null) {
@@ -52,11 +47,11 @@ async function shallowCloneElement(
 async function cloneChildren(
   element: Element,
   clone: Element,
-  context: Context,
+  options: Options,
 ): Promise<void> {
   for (const child of element.childNodes) {
     if (child.nodeType === Node.ELEMENT_NODE) {
-      const childClone = await cloneElement(child as Element, context);
+      const childClone = await cloneElement(child as Element, options);
       if (childClone != null) {
         clone.appendChild(childClone);
       }
