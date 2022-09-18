@@ -2,7 +2,7 @@ import { Cloner, Filter } from "../types.js";
 import { uid } from "../uid.js";
 import { makeImage } from "../util.js";
 import { postprocess } from "./fix.js";
-import { copyStyles } from "./styles.js";
+import { copyStyles, getStyles, Pseudo } from "./styles.js";
 
 const unsupported = new Set(["IFRAME", "OBJECT", "EMBED", "VIDEO", "AUDIO"]);
 
@@ -17,14 +17,11 @@ export async function cloneElement(
 ): Promise<Element | null> {
   const clone = await shallowCloneElement(element, context);
   if (clone != null) {
+    clonePseudoElement(element, clone, ":before");
+    clonePseudoElement(element, clone, ":after");
     await cloneChildren(element, clone, context);
-    if (element.nodeType === Node.ELEMENT_NODE) {
-      for (const pseudo of [":before", ":after"]) {
-        clonePseudoElement(element, clone, pseudo);
-      }
-      copyStyles(element, clone);
-      postprocess(element, clone);
-    }
+    copyStyles(element, clone);
+    postprocess(element, clone);
   }
   return clone;
 }
@@ -72,41 +69,19 @@ async function cloneChildren(
 function clonePseudoElement(
   element: Element,
   clone: Element,
-  pseudo: string,
+  pseudo: Pseudo,
 ): void {
-  const style = getComputedStyle(element, pseudo);
-  const content = style.getPropertyValue("content");
-
-  if (content === "" || content === "none") {
+  const styles = getStyles(element, pseudo);
+  if ((styles.get("content") ?? "") === "") {
     return;
   }
-
   const className = uid();
-  const currentClass = clone.getAttribute("class");
-  if (currentClass) {
-    clone.setAttribute("class", `${currentClass} ${className}`);
-  }
-
-  const formatPseudoElementStyle = (): Text => {
-    const formatCssText = () => {
-      return `${style.cssText} content: ${style.getPropertyValue("content")}`;
-    };
-
-    const formatCssProperties = () => {
-      return [...style]
-        .map((name: string): string => {
-          const value = style.getPropertyValue(name);
-          const priority = style.getPropertyPriority(name);
-          return `${name}: ${value} ${priority}`;
-        })
-        .join("; ");
-    };
-
-    const cssText = style.cssText ? formatCssText() : formatCssProperties();
-    return document.createTextNode(`.${className}:${pseudo} { ${cssText} }`);
-  };
-
-  const styleElement = document.createElement("style");
-  styleElement.appendChild(formatPseudoElementStyle());
-  clone.appendChild(styleElement);
+  clone.classList.add(className);
+  const cssProps = [...styles.entries()]
+    .map(([name, value]) => `${name}:${value}`)
+    .join("; ");
+  const cssText = `.${className}${pseudo} { ${cssProps} }`;
+  const style = document.createElement("style");
+  style.appendChild(document.createTextNode(cssText));
+  clone.appendChild(style);
 }

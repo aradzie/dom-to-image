@@ -1,10 +1,11 @@
 import { styleOf } from "../util.js";
 
-type ElementStyles = Map</* name */ string, /* value*/ string>;
+export type StyleProperties = Map<string, string>;
 
-const getStyles = (element: Element): ElementStyles => {
+export type Pseudo = ":before" | ":after";
+
+export const readStyles = (style: CSSStyleDeclaration): StyleProperties => {
   const map = new Map<string, string>();
-  const style = getComputedStyle(element);
   const { length } = style;
   for (let i = 0; i < length; i++) {
     const name = style.item(i);
@@ -13,15 +14,26 @@ const getStyles = (element: Element): ElementStyles => {
   return map;
 };
 
-const defaultStyles = new Map</* tag */ string, ElementStyles>();
+export const getStyles = (
+  element: Element,
+  pseudoElt: Pseudo | null = null,
+): StyleProperties => {
+  return readStyles(getComputedStyle(element, pseudoElt));
+};
 
-const getDefaultStyles = ({ tagName }: Element): ElementStyles => {
-  let styles = defaultStyles.get(tagName);
+const defaultStyles = new Map<string, StyleProperties>();
+
+export const getDefaultStyles = (
+  element: Element,
+  pseudoElt: Pseudo | null = null,
+): StyleProperties => {
+  const key = `${element.tagName}${pseudoElt ?? ""}`;
+  let styles = defaultStyles.get(key);
   if (styles == null) {
     const document = new Document();
-    const element = document.createElement(tagName);
+    const element = document.createElement(key);
     document.appendChild(element);
-    defaultStyles.set(tagName, (styles = getStyles(element)));
+    defaultStyles.set(key, (styles = getStyles(element, pseudoElt)));
   }
   return styles;
 };
