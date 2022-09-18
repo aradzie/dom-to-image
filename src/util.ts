@@ -1,4 +1,4 @@
-import { impl } from "./options.js";
+import { assets } from "./assets.js";
 import { DataUrl, parseDataUrl } from "./urls.js";
 
 export const toElement = (selector: Element | string): Element => {
@@ -64,8 +64,9 @@ export const makeImage = (url: string): Promise<HTMLImageElement> => {
     image.onerror = () => {
       reject(new Error("makeImage"));
     };
-    if (impl.options.crossOrigin) {
-      image.crossOrigin = "use-credentials";
+    const { options } = assets;
+    if (options.crossOrigin != null) {
+      image.crossOrigin = options.crossOrigin;
     }
     image.src = url;
   });

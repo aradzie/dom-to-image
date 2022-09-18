@@ -1,5 +1,5 @@
+import { assets } from "./assets.js";
 import { inlineUrls } from "./inliner.js";
-import { load } from "./load.js";
 import { mime } from "./mime.js";
 import { formatDataUrl, isDataUrl } from "./urls.js";
 import { readBlobAsDataUrl, styleOf } from "./util.js";
@@ -30,7 +30,7 @@ async function inlineBackground(element: Element): Promise<void> {
 async function inlineImage(element: HTMLImageElement): Promise<void> {
   const url = element.src;
   if (!isDataUrl(url)) {
-    const blob = await load(url);
+    const blob = await assets.load(url);
     const { mimeType, encoding, data } = await readBlobAsDataUrl(blob);
     const dataUrl = formatDataUrl({
       mimeType: mime.mimeType(url, mimeType),

@@ -1,4 +1,4 @@
-import { load } from "./load.js";
+import { assets } from "./assets.js";
 import { mime } from "./mime.js";
 import {
   containsUrls,
@@ -15,7 +15,7 @@ export const inlineUrls = async (
 ): Promise<string> => {
   const inlineUrl = async (content: string, url: string) => {
     const resolvedUrl = baseUrl ? resolveUrl(url, baseUrl) : url;
-    const blob = await load(resolvedUrl);
+    const blob = await assets.load(resolvedUrl);
     const { mimeType, encoding, data } = await readBlobAsDataUrl(blob);
     const dataUrl = formatDataUrl({
       mimeType: mime.mimeType(url, mimeType),
