@@ -1,0 +1,7 @@
+.preview {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-image: url(assets/checkerboard.png);
+}

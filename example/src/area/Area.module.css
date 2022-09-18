@@ -1,0 +1,37 @@
+.area {
+  position: relative;
+}
+
+.box {
+  display: flex;
+  gap: 1rem;
+}
+
+.exampleImage {
+  composes: placeholder from "./images.module.css";
+}
+
+.backgroundImage1 {
+  composes: placeholder from "./images.module.css";
+  background-image: url(assets/image1.png);
+}
+
+.backgroundImage2 {
+  composes: placeholder from "./images.module.css";
+  background-image: url(assets/image2.png);
+}
+
+.backgroundImage3 {
+  composes: placeholder from "./images.module.css";
+  background-image: url(assets/image3.svg);
+}
+
+.before:before {
+  content: "[before] ";
+  color: gray;
+}
+
+.after:after {
+  content: " [after]";
+  color: gray;
+}

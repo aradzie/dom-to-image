@@ -1,0 +1,56 @@
+.app {
+  font-family: "Roboto", sans-serif;
+  color: #282828;
+}
+
+.panes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "leftHeader rightHeader"
+    "leftArea rightArea";
+}
+
+.header {
+  padding: 1rem;
+  font-weight: bold;
+}
+
+.area {
+  padding: 1rem;
+}
+
+.leftHeader {
+  composes: header;
+  grid-area: leftHeader;
+  border-right: 1px solid black;
+  border-bottom: 1px dotted black;
+}
+
+.rightHeader {
+  composes: header;
+  grid-area: rightHeader;
+  border-left: 1px solid black;
+  border-bottom: 1px dotted black;
+}
+
+.leftArea {
+  composes: area;
+  grid-area: leftArea;
+  border-right: 1px solid black;
+  border-bottom: 1px dotted black;
+}
+
+.rightArea {
+  composes: area;
+  grid-area: rightArea;
+  border-left: 1px solid black;
+  border-bottom: 1px dotted black;
+}
+
+.status {
+  padding: 1rem;
+  white-space: pre;
+  font-family: monospace;
+}
