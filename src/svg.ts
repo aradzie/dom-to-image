@@ -1,12 +1,35 @@
 import { cloneElement } from "./clone/element.js";
 import { Styles } from "./clone/styles.js";
-import { embedFonts } from "./fonts.js";
-import { inlineImages } from "./images.js";
+import { inlineImages } from "./inline.js";
 import { Options } from "./types.js";
 import { formatDataUrl } from "./urls.js";
 import { escapeUrlData, styleOf } from "./util.js";
 
-export const positionElement = (style: CSSStyleDeclaration): void => {
+export async function toSvgDataUrl(
+  element: Element,
+  options: Options,
+  width: number,
+  height: number,
+): Promise<string> {
+  const styles = new Styles();
+  const clone = await cloneElement(element, options, styles);
+  if (clone == null) {
+    throw new Error("Cannot clone the root element.");
+  }
+  await inlineImages(clone);
+  await styles.inlineFonts();
+
+  positionElement(styleOf(clone));
+  styleElement(styleOf(clone), options);
+
+  clone.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+  let data = escapeUrlData(new XMLSerializer().serializeToString(clone));
+  data = `<foreignObject x="0" y="0" width="100%" height="100%">${data}</foreignObject>`;
+  data = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${data}</svg>`;
+  return formatDataUrl({ mimeType: "image/svg+xml", data });
+}
+
+function positionElement(style: CSSStyleDeclaration): void {
   for (const name of [
     "inset",
     "inset-block",
@@ -23,12 +46,12 @@ export const positionElement = (style: CSSStyleDeclaration): void => {
     style.removeProperty(name);
   }
   style.setProperty("inset", "0px");
-};
+}
 
-export const styleElement = (
+function styleElement(
   style: CSSStyleDeclaration,
   { width, height, backgroundColor, style: styleProps }: Options,
-): void => {
+): void {
   if (width != null) {
     style.width = `${width}px`;
   }
@@ -41,34 +64,4 @@ export const styleElement = (
   if (styleProps != null) {
     Object.assign(style, styleProps);
   }
-};
-
-export const detachedClone = async (
-  element: Element,
-  options: Options,
-): Promise<Element> => {
-  const styles = new Styles();
-  const clone = await cloneElement(element, options, styles);
-  if (clone == null) {
-    throw new Error("Cannot clone the root element.");
-  }
-  await inlineImages(clone);
-  await embedFonts(clone);
-  const style = styleOf(clone);
-  positionElement(style);
-  styleElement(style, options);
-  styles.finish(clone);
-  return clone;
-};
-
-export const toSvgDataUrl = (
-  element: Element,
-  width: number,
-  height: number,
-): string => {
-  element.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-  let data = escapeUrlData(new XMLSerializer().serializeToString(element));
-  data = `<foreignObject x="0" y="0" width="100%" height="100%">${data}</foreignObject>`;
-  data = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${data}</svg>`;
-  return formatDataUrl({ mimeType: "image/svg+xml", data });
-};
+}

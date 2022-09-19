@@ -1,13 +1,18 @@
-export const fixInputElement = (element: Element, clone: Element): void => {
+export function postprocess(element: Element, clone: Element): void {
+  fixInputElement(element, clone);
+  fixSvgElement(clone);
+}
+
+function fixInputElement(element: Element, clone: Element): void {
   if (element instanceof HTMLInputElement) {
     clone.setAttribute("value", element.value);
   }
   if (element instanceof HTMLTextAreaElement) {
     clone.textContent = element.value;
   }
-};
+}
 
-export const fixSvgElement = (clone: Element): void => {
+function fixSvgElement(clone: Element): void {
   if (clone instanceof SVGElement) {
     clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     if (clone instanceof SVGRectElement) {
@@ -19,9 +24,4 @@ export const fixSvgElement = (clone: Element): void => {
       }
     }
   }
-};
-
-export const postprocess = (element: Element, clone: Element): void => {
-  fixInputElement(element, clone);
-  fixSvgElement(clone);
-};
+}

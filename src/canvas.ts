@@ -1,4 +1,4 @@
-import { detachedClone, toSvgDataUrl } from "./svg.js";
+import { toSvgDataUrl } from "./svg.js";
 import { Options } from "./types.js";
 import { canvasToBlob, elementSize, makeImage, toElement } from "./util.js";
 
@@ -12,8 +12,8 @@ export const toCanvas = async (
   const height = options.height ?? defaultHeight;
   const scale = options.scale ?? 1;
   const backgroundColor = options.backgroundColor ?? null;
-  const clone = await detachedClone(element, options);
-  const image = await makeImage(toSvgDataUrl(clone, width, height));
+  const dataUrl = await toSvgDataUrl(element, options, width, height);
+  const image = await makeImage(dataUrl);
   const canvas = document.createElement("canvas");
   canvas.width = width * scale;
   canvas.height = height * scale;

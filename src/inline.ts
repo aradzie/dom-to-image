@@ -1,6 +1,31 @@
 import { assets } from "./assets.js";
-import { formatDataUrl, isDataUrl } from "./urls.js";
+import {
+  containsUrls,
+  formatDataUrl,
+  isDataUrl,
+  readUrls,
+  urlToRegex,
+} from "./urls.js";
 import { readBlobAsDataUrl } from "./util.js";
+
+export async function inlineUrls(content: string): Promise<string> {
+  const inlineUrl = async (value: string, url: string) => {
+    const blob = await assets.load(url);
+    const { mimeType, encoding, data } = await readBlobAsDataUrl(blob);
+    const dataUrl = formatDataUrl({
+      mimeType: assets.getMimeType(url, mimeType),
+      encoding,
+      data,
+    });
+    return value.replace(urlToRegex(url), `$1${dataUrl}$3`);
+  };
+  if (containsUrls(content)) {
+    for (const url of readUrls(content)) {
+      content = await inlineUrl(content, url);
+    }
+  }
+  return content;
+}
 
 export async function inlineImages(element: Element): Promise<void> {
   if (element instanceof HTMLImageElement) {

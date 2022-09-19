@@ -81,7 +81,3 @@ export const readUrls = (content: string): string[] => {
   }
   return urls;
 };
-
-export const resolveUrl = (url: string, baseUrl: string): string => {
-  return String(new URL(url, baseUrl));
-};
