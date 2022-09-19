@@ -1,5 +1,6 @@
 const { join } = require("node:path");
 const { DefinePlugin } = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ResolveTypeScriptPlugin = require("resolve-typescript-plugin");
 
 module.exports = {
@@ -12,7 +13,7 @@ module.exports = {
   output: {
     path: join(__dirname, "build"),
     clean: true,
-    filename: `[name].js`,
+    filename: `[contenthash:20].js`,
     chunkFilename: `[contenthash:20].js`,
     assetModuleFilename: `[contenthash:20][ext]`,
   },
@@ -43,6 +44,10 @@ module.exports = {
   plugins: [
     new DefinePlugin({
       "typeof window": JSON.stringify("object"),
+    }),
+    new HtmlWebpackPlugin({
+      title: "Example Application",
+      scriptLoading: "defer",
     }),
   ],
 };
