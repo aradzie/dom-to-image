@@ -1,10 +1,8 @@
 import { assets } from "./assets.js";
-import { inlineStyleUrls } from "./inliner.js";
 import { formatDataUrl, isDataUrl } from "./urls.js";
 import { readBlobAsDataUrl } from "./util.js";
 
 export async function inlineImages(element: Element): Promise<void> {
-  await inlineStyleUrls(element);
   if (element instanceof HTMLImageElement) {
     return await inlineImage(element);
   } else {

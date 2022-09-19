@@ -1,4 +1,5 @@
 import { cloneElement } from "./clone/element.js";
+import { Styles } from "./clone/styles.js";
 import { embedFonts } from "./fonts.js";
 import { inlineImages } from "./images.js";
 import { Options } from "./types.js";
@@ -46,7 +47,8 @@ export const detachedClone = async (
   element: Element,
   options: Options,
 ): Promise<Element> => {
-  const clone = await cloneElement(element, options);
+  const styles = new Styles();
+  const clone = await cloneElement(element, options, styles);
   if (clone == null) {
     throw new Error("Cannot clone the root element.");
   }
@@ -55,6 +57,7 @@ export const detachedClone = async (
   const style = styleOf(clone);
   positionElement(style);
   styleElement(style, options);
+  styles.finish(clone);
   return clone;
 };
 

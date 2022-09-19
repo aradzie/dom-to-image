@@ -6,19 +6,7 @@ import {
   resolveUrl,
   urlToRegex,
 } from "./urls.js";
-import { readBlobAsDataUrl, styleOf } from "./util.js";
-
-export async function inlineStyleUrls(element: Element): Promise<void> {
-  const style = styleOf(element);
-  const { length } = style;
-  for (let i = 0; i < length; i++) {
-    const name = style.item(i);
-    const value = style.getPropertyValue(name);
-    if (value !== "") {
-      style.setProperty(name, await inlineUrls(value));
-    }
-  }
-}
+import { readBlobAsDataUrl } from "./util.js";
 
 export const inlineUrls = async (
   content: string,

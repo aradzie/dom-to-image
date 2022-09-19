@@ -1,21 +1,19 @@
 import { Options } from "../types.js";
-import { uid } from "../uid.js";
 import { makeImage } from "../util.js";
 import { postprocess } from "./fix.js";
-import { copyStyles, getStyles, Pseudo } from "./styles.js";
+import { Styles } from "./styles.js";
 
 const unsupported = new Set(["IFRAME", "OBJECT", "EMBED", "VIDEO", "AUDIO"]);
 
 export async function cloneElement(
   element: Element,
   options: Options,
+  styles: Styles,
 ): Promise<Element | null> {
   const clone = await shallowCloneElement(element, options);
   if (clone != null) {
-    clonePseudoElement(element, clone, ":before");
-    clonePseudoElement(element, clone, ":after");
-    await cloneChildren(element, clone, options);
-    copyStyles(element, clone);
+    await styles.copyStyles(element, clone);
+    await cloneChildren(element, clone, options, styles);
     postprocess(element, clone);
   }
   return clone;
@@ -48,10 +46,11 @@ async function cloneChildren(
   element: Element,
   clone: Element,
   options: Options,
+  styles: Styles,
 ): Promise<void> {
   for (const child of element.childNodes) {
     if (child.nodeType === Node.ELEMENT_NODE) {
-      const childClone = await cloneElement(child as Element, options);
+      const childClone = await cloneElement(child as Element, options, styles);
       if (childClone != null) {
         clone.appendChild(childClone);
       }
@@ -59,24 +58,4 @@ async function cloneChildren(
       clone.appendChild(child.cloneNode(false));
     }
   }
-}
-
-function clonePseudoElement(
-  element: Element,
-  clone: Element,
-  pseudo: Pseudo,
-): void {
-  const styles = getStyles(element, pseudo);
-  if ((styles.get("content") ?? "") === "") {
-    return;
-  }
-  const className = `cls-${uid()}`;
-  clone.classList.add(className);
-  const cssProps = [...styles.entries()]
-    .map(([name, value]) => `${name}:${value}`)
-    .join("; ");
-  const cssText = `.${className}${pseudo} { ${cssProps} }`;
-  const style = document.createElement("style");
-  style.appendChild(document.createTextNode(cssText));
-  clone.appendChild(style);
 }
