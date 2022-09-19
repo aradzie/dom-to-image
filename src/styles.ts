@@ -1,6 +1,6 @@
-import { inlineUrls } from "../inline.js";
-import { containsUrls } from "../urls.js";
-import { styleOf } from "../util.js";
+import { inlineUrls } from "./inline.js";
+import { containsUrls } from "./urls.js";
+import { styleOf } from "./util.js";
 
 export class Styles {
   private classNameIndex = 1;
@@ -29,23 +29,25 @@ export class Styles {
 
     const beforeContent = sourceBefore.getPropertyValue("content");
     const afterContent = sourceAfter.getPropertyValue("content");
-    if (beforeContent || afterContent) {
-      const className = this.nextClassName();
-      clone.classList.add(className);
-      {
-        const properties: [string, string][] = [];
-        for (const [name, value] of styleEntries(sourceBefore)) {
-          properties.push([name, await inlineUrls(value)]);
-        }
-        this.rules.push(makeStyleRule(`.${className}:before`, properties));
+    if (!(beforeContent || afterContent)) {
+      return;
+    }
+
+    const className = this.nextClassName();
+    clone.setAttribute("class", className);
+    {
+      const properties: [string, string][] = [];
+      for (const [name, value] of styleEntries(sourceBefore)) {
+        properties.push([name, await inlineUrls(value)]);
       }
-      {
-        const properties: [string, string][] = [];
-        for (const [name, value] of styleEntries(sourceAfter)) {
-          properties.push([name, await inlineUrls(value)]);
-        }
-        this.rules.push(makeStyleRule(`.${className}:after`, properties));
+      this.rules.push(makeStyleRule(`.${className}:before`, properties));
+    }
+    {
+      const properties: [string, string][] = [];
+      for (const [name, value] of styleEntries(sourceAfter)) {
+        properties.push([name, await inlineUrls(value)]);
       }
+      this.rules.push(makeStyleRule(`.${className}:after`, properties));
     }
   }
 
@@ -62,13 +64,9 @@ export class Styles {
     }
   }
 
-  getCssText(): string {
-    return this.rules.join("\n");
-  }
-
   getStyleElement(): HTMLStyleElement {
     const style = document.createElement("style");
-    style.appendChild(document.createTextNode(this.getCssText()));
+    style.appendChild(document.createTextNode(this.rules.join("\n")));
     return style;
   }
 }
@@ -90,6 +88,25 @@ function* styleEntries(
       }
     }
   }
+}
+
+const defaultStyle = new Map<string, CSSStyleDeclaration>();
+
+export function getDefaultStyle(
+  element: Element,
+  pseudoElt: string | null = null,
+): CSSStyleDeclaration {
+  const key = `${element.tagName}${pseudoElt ?? ""}`;
+  let styles = defaultStyle.get(key);
+  if (styles == null) {
+    const document = new Document();
+    const test = document.createElement(element.tagName);
+    const body = document.createElement("body");
+    body.appendChild(test);
+    document.appendChild(body);
+    defaultStyle.set(key, (styles = getComputedStyle(test, pseudoElt)));
+  }
+  return styles;
 }
 
 function makeStyleRule(

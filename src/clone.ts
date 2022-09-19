@@ -1,7 +1,6 @@
-import { Options } from "../types.js";
-import { makeImage } from "../util.js";
-import { postprocess } from "./fix.js";
 import { Styles } from "./styles.js";
+import { Options } from "./types.js";
+import { makeImage } from "./util.js";
 
 const unsupported = new Set(["IFRAME", "OBJECT", "EMBED", "VIDEO", "AUDIO"]);
 
@@ -14,7 +13,6 @@ export async function cloneElement(
   if (clone != null) {
     await styles.copyStyles(element, clone);
     await cloneChildren(element, clone, options, styles);
-    postprocess(element, clone);
   }
   return clone;
 }

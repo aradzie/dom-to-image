@@ -64,14 +64,14 @@ export const canvasToBlob = (
 
 export const readBlobAsDataUrl = (body: Blob): Promise<DataUrl> => {
   return new Promise((resolve, reject) => {
-    const encoder = new FileReader();
-    encoder.onload = () => {
-      resolve(parseDataUrl(encoder.result as string));
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(parseDataUrl(reader.result as string));
     };
-    encoder.onerror = () => {
+    reader.onerror = () => {
       reject(new Error("readBlobAsDataUrl"));
     };
-    encoder.readAsDataURL(body);
+    reader.readAsDataURL(body);
   });
 };
 

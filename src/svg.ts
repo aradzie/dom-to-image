@@ -1,6 +1,6 @@
-import { cloneElement } from "./clone/element.js";
-import { Styles } from "./clone/styles.js";
+import { cloneElement } from "./clone.js";
 import { inlineImages } from "./inline.js";
+import { Styles } from "./styles.js";
 import { Options } from "./types.js";
 import { formatDataUrl } from "./urls.js";
 import { escapeUrlData, styleOf } from "./util.js";
@@ -15,6 +15,17 @@ export async function toSvgDataUrl(
   height: number,
 ): Promise<string> {
   const styles = new Styles();
+  const clone = await detachedClone(element, options, styles);
+  const svg = toSvg(clone, styles.getStyleElement(), width, height);
+  const data = escapeUrlData(new XMLSerializer().serializeToString(svg));
+  return formatDataUrl({ mimeType: "image/svg+xml", data });
+}
+
+async function detachedClone(
+  element: Element,
+  options: Options,
+  styles: Styles,
+) {
   const clone = await cloneElement(element, options, styles);
   if (clone == null) {
     throw new Error("Cannot clone the root element.");
@@ -23,9 +34,7 @@ export async function toSvgDataUrl(
   await styles.inlineFonts();
   positionElement(styleOf(clone));
   styleElement(styleOf(clone), options);
-  const svg = toSvg(clone, styles.getStyleElement(), width, height);
-  const data = escapeUrlData(new XMLSerializer().serializeToString(svg));
-  return formatDataUrl({ mimeType: "image/svg+xml", data });
+  return clone;
 }
 
 function toSvg(

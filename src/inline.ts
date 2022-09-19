@@ -9,19 +9,16 @@ import {
 import { readBlobAsDataUrl } from "./util.js";
 
 export async function inlineUrls(content: string): Promise<string> {
-  const inlineUrl = async (value: string, url: string) => {
-    const blob = await assets.load(url);
-    const { mimeType, encoding, data } = await readBlobAsDataUrl(blob);
-    const dataUrl = formatDataUrl({
-      mimeType: assets.getMimeType(url, mimeType),
-      encoding,
-      data,
-    });
-    return value.replace(urlToRegex(url), `$1${dataUrl}$3`);
-  };
   if (containsUrls(content)) {
     for (const url of readUrls(content)) {
-      content = await inlineUrl(content, url);
+      const blob = await assets.load(url);
+      const { mimeType, encoding, data } = await readBlobAsDataUrl(blob);
+      const dataUrl = formatDataUrl({
+        mimeType: assets.getMimeType(url, mimeType),
+        encoding,
+        data,
+      });
+      content = content.replace(urlToRegex(url), `$1${dataUrl}$3`);
     }
   }
   return content;
