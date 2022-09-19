@@ -5,6 +5,9 @@ import { Options } from "./types.js";
 import { formatDataUrl } from "./urls.js";
 import { escapeUrlData, styleOf } from "./util.js";
 
+const nsXhtml = "http://www.w3.org/1999/xhtml";
+const nsSvg = "http://www.w3.org/2000/svg";
+
 export async function toSvgDataUrl(
   element: Element,
   options: Options,
@@ -18,15 +21,33 @@ export async function toSvgDataUrl(
   }
   await inlineImages(clone);
   await styles.inlineFonts();
-
   positionElement(styleOf(clone));
   styleElement(styleOf(clone), options);
-
-  clone.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
-  let data = escapeUrlData(new XMLSerializer().serializeToString(clone));
-  data = `<foreignObject x="0" y="0" width="100%" height="100%">${data}</foreignObject>`;
-  data = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${data}</svg>`;
+  const svg = toSvg(clone, styles.getStyleElement(), width, height);
+  const data = escapeUrlData(new XMLSerializer().serializeToString(svg));
   return formatDataUrl({ mimeType: "image/svg+xml", data });
+}
+
+function toSvg(
+  clone: Element,
+  style: Element,
+  width: number,
+  height: number,
+): Element {
+  clone.setAttribute("xmlns", nsXhtml);
+  style.setAttribute("xmlns", nsXhtml);
+  const foreignObject = document.createElementNS(nsSvg, "foreignObject");
+  foreignObject.setAttribute("x", "0");
+  foreignObject.setAttribute("y", "0");
+  foreignObject.setAttribute("width", "100%");
+  foreignObject.setAttribute("height", "100%");
+  foreignObject.appendChild(clone);
+  const svg = document.createElementNS(nsSvg, "svg");
+  svg.setAttribute("width", String(width));
+  svg.setAttribute("height", String(height));
+  svg.appendChild(style);
+  svg.appendChild(foreignObject);
+  return svg;
 }
 
 function positionElement(style: CSSStyleDeclaration): void {
