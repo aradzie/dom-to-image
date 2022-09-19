@@ -32,9 +32,11 @@ export const Area = forwardRef<HTMLDivElement, Props>(
         <span style={{ textDecoration: "underline" }}>underline</span>
       </p>
       <p>
-        <span className={styles.before}>before</span>
+        <span className={styles.hasBefore}>has :before</span>
         {" / "}
-        <span className={styles.after}>after</span>
+        <span className={styles.hasAfter}>has :after</span>
+        {" / "}
+        <span className={styles.usesCustomProp}>uses var(--example)</span>
       </p>
       <figure>
         <figcaption>Static image</figcaption>

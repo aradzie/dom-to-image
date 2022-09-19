@@ -79,7 +79,7 @@ function* styleEntries(
   for (let i = 0; i < length; i++) {
     const name = style.item(i);
     const value = style.getPropertyValue(name);
-    if (value !== "") {
+    if (!name.startsWith("--") && value !== "") {
       if (
         excludedStyle == null ||
         value !== excludedStyle.getPropertyValue(name)

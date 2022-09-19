@@ -1,3 +1,7 @@
+:global :root {
+  --example: red;
+}
+
 .area {
   position: relative;
 }
@@ -26,12 +30,16 @@
   background-image: url(assets/image3.svg);
 }
 
-.before:before {
+.hasBefore:before {
   content: "[before] ";
-  color: gray;
+  color: var(--example);
 }
 
-.after:after {
+.hasAfter:after {
   content: " [after]";
-  color: gray;
+  color: var(--example);
+}
+
+.usesCustomProp {
+  color: var(--example);
 }
