@@ -1,9 +1,7 @@
-import { cloneElement } from "./clone.js";
-import { inlineImages } from "./inline.js";
-import { Styles } from "./styles.js";
+import { Cloner } from "./cloner.js";
 import { Options } from "./types.js";
 import { formatDataUrl } from "./urls.js";
-import { escapeUrlData, styleOf } from "./util.js";
+import { escapeUrlData } from "./util.js";
 
 const nsXhtml = "http://www.w3.org/1999/xhtml";
 const nsSvg = "http://www.w3.org/2000/svg";
@@ -14,30 +12,22 @@ export async function toSvgDataUrl(
   width: number,
   height: number,
 ): Promise<string> {
-  const styles = new Styles();
-  const clone = await detachedClone(element, options, styles);
-  const svg = toSvg(clone, styles.getStyleElement(), width, height);
+  const cloner = new Cloner(options);
+  const clone = await cloner.cloneElement(element);
+  if (clone == null) {
+    throw new Error("Cannot clone the root element.");
+  }
+  const style = document.createElement("style");
+  const svg = makeSvgElement(clone, style, width, height);
+  applyOptions(clone, options);
+  await cloner.inlineFonts();
+  await cloner.copyStyles();
+  style.appendChild(document.createTextNode(cloner.getStyleText()));
   const data = escapeUrlData(new XMLSerializer().serializeToString(svg));
   return formatDataUrl({ mimeType: "image/svg+xml", data });
 }
 
-async function detachedClone(
-  element: Element,
-  options: Options,
-  styles: Styles,
-) {
-  const clone = await cloneElement(element, options, styles);
-  if (clone == null) {
-    throw new Error("Cannot clone the root element.");
-  }
-  await inlineImages(clone);
-  await styles.inlineFonts();
-  positionElement(styleOf(clone));
-  styleElement(styleOf(clone), options);
-  return clone;
-}
-
-function toSvg(
+function makeSvgElement(
   clone: Element,
   style: Element,
   width: number,
@@ -59,7 +49,11 @@ function toSvg(
   return svg;
 }
 
-function positionElement(style: CSSStyleDeclaration): void {
+function applyOptions(
+  clone: Element,
+  { width, height, backgroundColor, style: newStyle }: Options,
+): void {
+  const { style } = clone as HTMLElement;
   for (const name of [
     "inset",
     "inset-block",
@@ -76,12 +70,6 @@ function positionElement(style: CSSStyleDeclaration): void {
     style.removeProperty(name);
   }
   style.setProperty("inset", "0px");
-}
-
-function styleElement(
-  style: CSSStyleDeclaration,
-  { width, height, backgroundColor, style: styleProps }: Options,
-): void {
   if (width != null) {
     style.width = `${width}px`;
   }
@@ -91,7 +79,7 @@ function styleElement(
   if (backgroundColor != null) {
     style.backgroundColor = backgroundColor;
   }
-  if (styleProps != null) {
-    Object.assign(style, styleProps);
+  if (newStyle != null) {
+    Object.assign(style, newStyle);
   }
 }

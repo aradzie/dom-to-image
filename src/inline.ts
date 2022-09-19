@@ -24,19 +24,7 @@ export async function inlineUrls(content: string): Promise<string> {
   return content;
 }
 
-export async function inlineImages(element: Element): Promise<void> {
-  if (element instanceof HTMLImageElement) {
-    return await inlineImage(element);
-  } else {
-    for (const child of element.childNodes) {
-      if (child.nodeType === Node.ELEMENT_NODE) {
-        await inlineImages(child as Element);
-      }
-    }
-  }
-}
-
-async function inlineImage(element: HTMLImageElement): Promise<void> {
+export async function inlineImage(element: HTMLImageElement): Promise<void> {
   const url = element.src;
   if (!isDataUrl(url)) {
     const blob = await assets.load(url);

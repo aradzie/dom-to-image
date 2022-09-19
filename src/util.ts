@@ -39,9 +39,6 @@ export const escapeRegExp = (value: string): string =>
 export const escapeUrlData = (value: string): string =>
   value.replace(/%/g, "%25").replace(/#/g, "%23").replace(/\n/g, "%0A");
 
-export const styleOf = (element: Element): CSSStyleDeclaration =>
-  (element as unknown as ElementCSSInlineStyle).style;
-
 export const canvasToBlob = (
   canvas: HTMLCanvasElement,
   type?: string,
