@@ -4,7 +4,7 @@ import { canvasToBlob, elementSize, makeImage, toElement } from "./util.js";
 
 export const toCanvas = async (
   selector: Element | string,
-  options: Options,
+  options: Options = {},
 ): Promise<HTMLCanvasElement> => {
   const element = toElement(selector);
   const [defaultWidth, defaultHeight] = elementSize(element);
@@ -29,7 +29,7 @@ export const toCanvas = async (
 
 export const toBlob = async (
   selector: Element | string,
-  options: Options,
+  options?: Options,
   type?: string,
   quality?: any,
 ): Promise<Blob> => {
