@@ -142,35 +142,3 @@ test("clone with replacer", async (t) => {
 
   cleanup();
 });
-
-test.skip("inline fonts", async (t) => {
-  // Arrange.
-
-  const cleanup = loadHtml(`
-    <html>
-      <style>
-        @font-face {
-          font-family: "MyWebFont";
-          src: url("myfont.woff2") format("woff2"),
-               url("myfont.woff") format("woff");
-        }
-      </style>
-      <div id="root" class="root">hello</div>
-    </html>`);
-  const element = document.querySelector("#root") as Element;
-  const cloner = new Cloner({});
-
-  // Act.
-
-  const clone = (await cloner.cloneElement(element)) as Element;
-  await cloner.inlineFonts();
-  await cloner.copyStyles();
-
-  // Assert.
-
-  t.not(clone, element);
-  t.is(clone.tagName, "DIV");
-  t.is(clone.textContent, "hello");
-
-  cleanup();
-});

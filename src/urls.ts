@@ -74,10 +74,7 @@ export const readUrls = (content: string): string[] => {
   const urls = [];
   let match;
   while ((match = urlPattern.exec(content)) != null) {
-    const url = match[1];
-    if (!isDataUrl(url)) {
-      urls.push(url);
-    }
+    urls.push(match[1]);
   }
   return urls;
 };

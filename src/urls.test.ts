@@ -1,5 +1,5 @@
 import test from "ava";
-import { formatDataUrl, parseDataUrl } from "./urls.js";
+import { containsUrls, formatDataUrl, parseDataUrl, readUrls } from "./urls.js";
 
 test("parse", (t) => {
   t.deepEqual(parseDataUrl("data:,"), {
@@ -132,5 +132,31 @@ test("format", (t) => {
       data: "abc",
     }),
     "data:image/png;base64,abc",
+  );
+});
+
+test("read urls", (t) => {
+  t.false(containsUrls(``));
+  t.false(containsUrls(`src: haha;`));
+  t.false(containsUrls(`src: url();`));
+  t.false(containsUrls(`src: url('');`));
+  t.false(containsUrls(`src: url("");`));
+  t.true(containsUrls(`src: url(data:,dummy);`));
+  t.true(containsUrls(`src: url(./image1.png);`));
+  t.true(containsUrls(`src: url('./image2.png');`));
+  t.true(containsUrls(`src: url("./image3.png");`));
+
+  t.deepEqual(readUrls(``), []);
+  t.deepEqual(readUrls(`haha`), []);
+  t.deepEqual(readUrls(`url()`), []);
+  t.deepEqual(readUrls(`url('')`), []);
+  t.deepEqual(readUrls(`url("")`), []);
+  t.deepEqual(
+    readUrls(`
+    .a { src: url(data:,dummy); }
+    .b { src: url(./image1.png); }
+    .c { src: url('./image2.png'); }
+    .d { src: url("./image3.png"); }`),
+    [`data:,dummy`, `./image1.png`, `./image2.png`, `./image3.png`],
   );
 });
