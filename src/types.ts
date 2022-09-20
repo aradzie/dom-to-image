@@ -1,17 +1,17 @@
-export type Cloner = (element: Element) => Promise<Element | null>;
+export type Replacer = (element: Element) => Promise<Element | null>;
 export type Filter = (element: Element) => boolean;
 
 export interface Options {
   /**
    * A custom element cloner function.
    *
-   * You can use this function to clone some elements, for example those
+   * You can use this function to replace some elements, for example those
    * which are not supported by default.
    *
    * If you have, for example, a video element, you can replace it with
    * a custom placeholder image with the help of this function.
    */
-  readonly cloner?: Cloner | null;
+  readonly replacer?: Replacer | null;
   /**
    * An element filtering function.
    *

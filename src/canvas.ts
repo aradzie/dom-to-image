@@ -2,10 +2,10 @@ import { toSvgDataUrl } from "./svg.js";
 import { Options } from "./types.js";
 import { canvasToBlob, elementSize, makeImage, toElement } from "./util.js";
 
-export const toCanvas = async (
+export async function captureElementToCanvas(
   selector: Element | string,
-  options: Options,
-): Promise<HTMLCanvasElement> => {
+  options: Options = {},
+): Promise<HTMLCanvasElement> {
   const element = toElement(selector);
   const [defaultWidth, defaultHeight] = elementSize(element);
   const width = Math.max(1, options.width ?? defaultWidth);
@@ -25,13 +25,17 @@ export const toCanvas = async (
   }
   ctx.drawImage(image, 0, 0);
   return canvas;
-};
+}
 
-export const toBlob = async (
+export async function captureElementToImage(
   selector: Element | string,
-  options: Options,
+  options?: Options,
   type?: string,
   quality?: any,
-): Promise<Blob> => {
-  return await canvasToBlob(await toCanvas(selector, options), type, quality);
-};
+): Promise<Blob> {
+  return await canvasToBlob(
+    await captureElementToCanvas(selector, options),
+    type,
+    quality,
+  );
+}

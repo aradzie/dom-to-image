@@ -17,9 +17,9 @@ features (like web font and image support) added.
 ## Usage
 
 ```javascript
-import { toBlob } from "@sosimple/dom-to-image";
+import { captureElementToImage } from "@sosimple/dom-to-image";
 
-toBlob(document.getElementById("my-node"))
+captureElementToImage(document.getElementById("my-node"))
   .then((blob) => {
     window.open(URL.createObjectURL(blob), "_blank");
   })

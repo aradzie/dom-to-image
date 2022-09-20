@@ -1,4 +1,4 @@
-import { toBlob } from "@sosimple/dom-to-image";
+import { captureElementToImage } from "@sosimple/dom-to-image";
 import { createRef, ReactElement, useEffect, useState } from "react";
 import styles from "./App.module.css";
 import { Area } from "./area/Area.js";
@@ -12,7 +12,7 @@ export const App = (): ReactElement => {
   const [src, setSrc] = useState(defaultSrc);
   const [status, setStatus] = useState("Working...");
   useEffect(() => {
-    toBlob(ref(areaRef), {})
+    captureElementToImage(ref(areaRef), {})
       .then((blob) => {
         setSrc(URL.createObjectURL(blob));
         setStatus("Screenshot created successfully.");

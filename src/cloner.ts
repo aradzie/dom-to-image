@@ -16,9 +16,9 @@ export class Cloner {
   constructor(readonly options: Options) {}
 
   async cloneElement(element: Element): Promise<Element | null> {
-    const { cloner, filter } = this.options;
-    if (cloner != null) {
-      const clone = await cloner(element);
+    const { replacer, filter } = this.options;
+    if (replacer != null) {
+      const clone = await replacer(element);
       if (clone != null) {
         return clone;
       }

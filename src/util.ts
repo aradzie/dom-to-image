@@ -79,7 +79,7 @@ export const makeImage = (url: string): Promise<HTMLImageElement> => {
       resolve(image);
     };
     image.onerror = () => {
-      reject(new Error("makeImage"));
+      reject(new Error(`Cannot load image from [${url}].`));
     };
     const { options } = assets;
     if (options.crossOrigin != null) {
