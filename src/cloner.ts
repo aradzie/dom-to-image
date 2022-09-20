@@ -33,8 +33,6 @@ export class Cloner {
     this.mapping.push([element, clone]);
     clone.removeAttribute("class");
     clone.removeAttribute("style");
-    const { style } = clone as HTMLElement;
-    style.all = "revert";
     await this.cloneChildren(element, clone);
     return clone;
   }
@@ -118,7 +116,7 @@ export class Cloner {
   }
 
   private nextClassName(): string {
-    return `c${String(this.classNameIndex++).padStart(3, "0")}`;
+    return "c" + String(this.classNameIndex++).padStart(3, "0");
   }
 }
 
