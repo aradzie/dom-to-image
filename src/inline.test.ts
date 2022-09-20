@@ -30,8 +30,8 @@ test("inline urls", async (t) => {
     `.s { background-image: url(data:,dummy); }
     @font-face {
       font-family: "MyWebFont";
-      src: url("data:application/font-woff;base64,bXlmb250LndvZmYy") format("woff2"),
-           url("data:application/font-woff;base64,bXlmb250LndvZmY=") format("woff");
+      src: url(data:application/font-woff;base64,bXlmb250LndvZmYy) format("woff2"),
+           url(data:application/font-woff;base64,bXlmb250LndvZmY=) format("woff");
     }`,
   );
 

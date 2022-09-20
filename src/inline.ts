@@ -1,29 +1,24 @@
 import { assets } from "./assets.js";
-import {
-  containsUrls,
-  formatDataUrl,
-  isDataUrl,
-  readUrls,
-  urlToRegex,
-} from "./urls.js";
+import { formatDataUrl, isDataUrl, joinUrls, splitUrls } from "./urls.js";
 import { readBlobAsDataUrl } from "./util.js";
 
 export async function inlineUrls(content: string): Promise<string> {
-  if (containsUrls(content)) {
-    for (const url of readUrls(content)) {
+  const pieces = splitUrls(content);
+  for (const piece of pieces) {
+    if (typeof piece !== "string") {
+      const { url } = piece;
       if (!isDataUrl(url)) {
         const blob = await assets.load(url);
         const { mimeType, encoding, data } = await readBlobAsDataUrl(blob);
-        const dataUrl = formatDataUrl({
+        piece.url = formatDataUrl({
           mimeType: assets.getMimeType(url, mimeType),
           encoding,
           data,
         });
-        content = content.replace(urlToRegex(url), `$1${dataUrl}$3`);
       }
     }
   }
-  return content;
+  return joinUrls(pieces);
 }
 
 export async function inlineImage(element: HTMLImageElement): Promise<void> {

@@ -1,5 +1,3 @@
-import { escapeRegExp } from "./util.js";
-
 export type DataUrl = {
   mimeType: string | "text/plain";
   encoding: "ascii" | "base64";
@@ -60,21 +58,39 @@ export const formatDataUrl = ({
   return `data:${s1}${s2},${data}`;
 };
 
-export const urlToRegex = (urlValue: string): RegExp => {
-  return new RegExp(`(url\\(['"]?)(${escapeRegExp(urlValue)})(['"]?\\))`, "g");
+export const escapeUrlData = (value: string): string => {
+  return value.replace(/%/g, "%25").replace(/#/g, "%23").replace(/\n/g, "%0A");
 };
 
 const urlPattern = /url\(['"]?([^'"]+?)['"]?\)/g;
+
+type Piece = string | { url: string };
 
 export const containsUrls = (content: string) => {
   return content.search(urlPattern) !== -1;
 };
 
-export const readUrls = (content: string): string[] => {
-  const urls = [];
+export const splitUrls = (content: string): Piece[] => {
+  const pieces: Piece[] = [];
+  let last = 0;
   let match;
   while ((match = urlPattern.exec(content)) != null) {
-    urls.push(match[1]);
+    const { index } = match;
+    const [g0, g1] = match;
+    if (index > last) {
+      pieces.push(content.substring(last, index));
+    }
+    pieces.push({ url: g1 });
+    last = index + g0.length;
   }
-  return urls;
+  if (last < content.length) {
+    pieces.push(content.substring(last));
+  }
+  return pieces;
+};
+
+export const joinUrls = (pieces: readonly Piece[]): string => {
+  return pieces
+    .map((piece) => (typeof piece === "string" ? piece : `url(${piece.url})`))
+    .join("");
 };

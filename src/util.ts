@@ -33,12 +33,6 @@ export const elementSize = (element: Element): [number, number] => {
   return [width, height];
 };
 
-export const escapeRegExp = (value: string): string =>
-  value.replace(/([.*+?^${}()|[\]/\\])/g, "\\$1");
-
-export const escapeUrlData = (value: string): string =>
-  value.replace(/%/g, "%25").replace(/#/g, "%23").replace(/\n/g, "%0A");
-
 export const canvasToBlob = (
   canvas: HTMLCanvasElement,
   type?: string,
