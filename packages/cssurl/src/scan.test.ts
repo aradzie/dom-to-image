@@ -1,53 +1,53 @@
 import test from "ava";
-import { scanUrls } from "./scan.js";
+import { scanCssUrls } from "./scan.js";
 
 test("scanUrls", (t) => {
-  t.deepEqual([...scanUrls(``)], []);
-  t.deepEqual([...scanUrls(`   `)], []);
-  t.deepEqual([...scanUrls(`hello`)], []);
-  t.deepEqual([...scanUrls(`url`)], []);
-  t.deepEqual([...scanUrls(`url()`)], []);
-  t.deepEqual([...scanUrls(`url ( )`)], []);
-  t.deepEqual([...scanUrls(`url('')`)], []);
-  t.deepEqual([...scanUrls(`url( '' )`)], []);
-  t.deepEqual([...scanUrls(`url("")`)], []);
-  t.deepEqual([...scanUrls(`url( "" )`)], []);
-  t.deepEqual([...scanUrls(`url(image.png`)], []);
-  t.deepEqual([...scanUrls(`url('image.png`)], []);
-  t.deepEqual([...scanUrls(`url('image.png'`)], []);
-  t.deepEqual([...scanUrls(`url("image.png`)], []);
-  t.deepEqual([...scanUrls(`url("image.png"`)], []);
-  t.deepEqual([...scanUrls(`url("image.png')`)], []);
-  t.deepEqual([...scanUrls(`url('image.png")`)], []);
-  t.deepEqual([...scanUrls(`url( a b c )`)], [{ index: 5, url: "a b c" }]);
+  t.deepEqual([...scanCssUrls(``)], []);
+  t.deepEqual([...scanCssUrls(`   `)], []);
+  t.deepEqual([...scanCssUrls(`hello`)], []);
+  t.deepEqual([...scanCssUrls(`url`)], []);
+  t.deepEqual([...scanCssUrls(`url()`)], []);
+  t.deepEqual([...scanCssUrls(`url( )`)], []);
+  t.deepEqual([...scanCssUrls(`url('')`)], []);
+  t.deepEqual([...scanCssUrls(`url( '' )`)], []);
+  t.deepEqual([...scanCssUrls(`url("")`)], []);
+  t.deepEqual([...scanCssUrls(`url( "" )`)], []);
+  t.deepEqual([...scanCssUrls(`url(image png)`)], []);
+  t.deepEqual([...scanCssUrls(`url(image.png`)], []);
+  t.deepEqual([...scanCssUrls(`url('image.png`)], []);
+  t.deepEqual([...scanCssUrls(`url('image.png'`)], []);
+  t.deepEqual([...scanCssUrls(`url("image.png`)], []);
+  t.deepEqual([...scanCssUrls(`url("image.png"`)], []);
+  t.deepEqual([...scanCssUrls(`url("image.png')`)], []);
+  t.deepEqual([...scanCssUrls(`url('image.png")`)], []);
   t.deepEqual(
-    [...scanUrls(`url(image.png)`)],
-    [{ index: 4, url: "image.png" }],
+    [...scanCssUrls(`url(image.png)`)],
+    [{ index: 0, length: 14, url: "image.png" }],
   );
   t.deepEqual(
-    [...scanUrls(`src:url ( image.png ); `)],
-    [{ index: 10, url: "image.png" }],
+    [...scanCssUrls(`src:url ( image.png ); `)],
+    [{ index: 4, length: 17, url: "image.png" }],
   );
   t.deepEqual(
-    [...scanUrls(`src:url ( 'image.png' ); `)],
-    [{ index: 11, url: "image.png" }],
+    [...scanCssUrls(`src:url ( 'image.png' ); `)],
+    [{ index: 4, length: 19, url: "image.png" }],
   );
   t.deepEqual(
-    [...scanUrls(`src:url ( "image.png" ); `)],
-    [{ index: 11, url: "image.png" }],
+    [...scanCssUrls(`src:url ( "image.png" ); `)],
+    [{ index: 4, length: 19, url: "image.png" }],
   );
   t.deepEqual(
-    [...scanUrls(`src:url(image1.png),url(image2.png); `)],
+    [...scanCssUrls(`src:url(image1.png),url(image2.png); `)],
     [
-      { index: 8, url: "image1.png" },
-      { index: 24, url: "image2.png" },
+      { index: 4, length: 15, url: "image1.png" },
+      { index: 20, length: 15, url: "image2.png" },
     ],
   );
   t.deepEqual(
-    [...scanUrls(`url('image.png' src:url(image1.png),url(image2.png); `)],
+    [...scanCssUrls(`url('image.png' src:url(image1.png),url(image2.png); `)],
     [
-      { index: 24, url: "image1.png" },
-      { index: 40, url: "image2.png" },
+      { index: 20, length: 15, url: "image1.png" },
+      { index: 36, length: 15, url: "image2.png" },
     ],
   );
 });

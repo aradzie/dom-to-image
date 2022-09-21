@@ -2,11 +2,14 @@
 
 export type UrlMatch = {
   index: number;
+  length: number;
   url: string;
 };
 
-export function* scanUrls(text: string): Generator<UrlMatch> {
+export function* scanCssUrls(cssText: string): Generator<UrlMatch> {
   const enum CharCode {
+    Slash = /* "/" */ 0x002f,
+    Star = /* "*" */ 0x002a,
     LParen = /* "(" */ 0x0028,
     RParen = /* ")" */ 0x0029,
     SQuote = /* `'` */ 0x0027,
@@ -18,35 +21,39 @@ export function* scanUrls(text: string): Generator<UrlMatch> {
     Url, // after "url"
     Paren, // after "("
     QBody, // after opening ' or "
-    QBodyEnd, // after closing ' or "
     UBody, // unquoted body
+    BodyEnd, // unquoted body end
   }
 
-  const { length } = text;
+  const { length } = cssText;
 
   let state = State.Initial;
   let index = 0;
   let start = 0;
-  let end = 0;
+  let bodyStart = 0;
+  let bodyEnd = 0;
   let quot = 0;
 
   while (index < length) {
     if (state === State.Initial) {
-      const i = text.indexOf("url", index);
+      const i = cssText.indexOf("url", index);
       if (i === -1) {
         return;
       }
-      index = i + 3;
       state = State.Url;
+      start = i;
+      index = i + 3;
       continue;
     }
 
-    const charCode = text.charCodeAt(index);
+    const charCode = cssText.charCodeAt(index);
+
     const isWhitespace =
       charCode === 0x0020 ||
       charCode === 0x0009 ||
       charCode === 0x000a ||
       charCode === 0x000d;
+
     switch (state) {
       case State.Url:
         if (isWhitespace) {
@@ -69,41 +76,51 @@ export function* scanUrls(text: string): Generator<UrlMatch> {
         if (charCode === CharCode.SQuote || charCode === CharCode.DQuote) {
           state = State.QBody;
           quot = charCode;
-          start = index + 1;
+          bodyStart = index + 1;
           break;
         }
         state = State.UBody;
         quot = 0;
-        start = index;
+        bodyStart = index;
         break;
       case State.QBody:
         if (charCode === quot) {
-          state = State.QBodyEnd;
-          end = index;
+          state = State.BodyEnd;
+          bodyEnd = index;
           break;
         }
         break;
       case State.UBody:
         if (isWhitespace) {
+          state = State.BodyEnd;
+          bodyEnd = index;
           break;
         }
         if (charCode === CharCode.RParen) {
           state = State.Initial;
-          if (end > start) {
-            yield { index: start, url: text.substring(start, end) };
+          bodyEnd = index;
+          if (bodyEnd > bodyStart) {
+            yield {
+              index: start,
+              length: index - start + 1,
+              url: cssText.substring(bodyStart, bodyEnd),
+            };
           }
           break;
         }
-        end = index + 1;
         break;
-      case State.QBodyEnd:
+      case State.BodyEnd:
         if (isWhitespace) {
           break;
         }
         if (charCode === CharCode.RParen) {
           state = State.Initial;
-          if (end > start) {
-            yield { index: start, url: text.substring(start, end) };
+          if (bodyEnd > bodyStart) {
+            yield {
+              index: start,
+              length: index - start + 1,
+              url: cssText.substring(bodyStart, bodyEnd),
+            };
           }
           break;
         }
@@ -112,5 +129,4 @@ export function* scanUrls(text: string): Generator<UrlMatch> {
     }
     index += 1;
   }
-  return true;
 }
