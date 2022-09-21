@@ -1,9 +1,11 @@
+import { joinCssUrls, splitCssUrls } from "@sosimple/cssurl";
 import { assets } from "./assets.js";
-import { formatDataUrl, isDataUrl, joinUrls, splitUrls } from "./urls.js";
+import { formatDataUrl, isDataUrl } from "./dataurl.js";
 import { readBlobAsDataUrl } from "./util.js";
 
-export async function inlineUrls(content: string): Promise<string> {
-  const pieces = splitUrls(content);
+export async function inlineUrls(cssText: string): Promise<string> {
+  const pieces = splitCssUrls(cssText);
+  let updated = false;
   for (const piece of pieces) {
     if (typeof piece !== "string") {
       const { url } = piece;
@@ -15,10 +17,11 @@ export async function inlineUrls(content: string): Promise<string> {
           encoding,
           data,
         });
+        updated = true;
       }
     }
   }
-  return joinUrls(pieces);
+  return updated ? joinCssUrls(pieces) : cssText;
 }
 
 export async function inlineImage(element: HTMLImageElement): Promise<void> {

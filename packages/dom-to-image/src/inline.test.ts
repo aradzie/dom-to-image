@@ -19,7 +19,7 @@ test("inline urls", async (t) => {
     @font-face {
       font-family: "MyWebFont";
       src: url("myfont.woff2") format("woff2"),
-           url("myfont.woff") format("woff");
+           url( 'myfont.woff' ) format("woff");
     }`,
   );
 

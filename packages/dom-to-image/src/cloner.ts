@@ -1,6 +1,5 @@
 import { inlineImage, inlineUrls } from "./inline.js";
 import { Options } from "./types.js";
-import { containsUrls } from "./urls.js";
 import { makeImage } from "./util.js";
 
 const unsupported = new Set(["IFRAME", "OBJECT", "EMBED", "VIDEO", "AUDIO"]);
@@ -101,11 +100,11 @@ export class Cloner {
   async inlineFonts(): Promise<void> {
     for (const styleSheet of document.styleSheets) {
       for (const cssRule of styleSheet.cssRules) {
-        if (
-          cssRule instanceof CSSFontFaceRule &&
-          containsUrls(cssRule.style.getPropertyValue("src"))
-        ) {
-          this.rules.push(await inlineUrls(cssRule.cssText));
+        if (cssRule instanceof CSSFontFaceRule) {
+          const cssText = await inlineUrls(cssRule.cssText);
+          if (cssText !== cssRule.cssText) {
+            this.rules.push(cssText);
+          }
         }
       }
     }

@@ -1,5 +1,5 @@
 import { assets } from "./assets.js";
-import { DataUrl, parseDataUrl } from "./urls.js";
+import { DataUrl, parseDataUrl } from "./dataurl.js";
 
 export const toElement = (selector: Element | string): Element => {
   if (typeof selector === "string") {

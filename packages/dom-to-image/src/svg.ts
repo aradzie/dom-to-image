@@ -1,6 +1,6 @@
 import { Cloner } from "./cloner.js";
 import { Options } from "./types.js";
-import { escapeUrlData, formatDataUrl } from "./urls.js";
+import { escapeUrlData, formatDataUrl } from "./dataurl.js";
 
 const nsXhtml = "http://www.w3.org/1999/xhtml";
 const nsSvg = "http://www.w3.org/2000/svg";
