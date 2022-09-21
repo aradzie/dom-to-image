@@ -10,11 +10,11 @@ export const isDataUrl = (url: string): boolean => {
 
 export const parseDataUrl = (url: string): DataUrl => {
   if (!isDataUrl(url)) {
-    throw new Error("Not a data url.");
+    throw new Error();
   }
   const i = url.indexOf(",");
   if (i === -1) {
-    throw new Error("Not a data url.");
+    throw new Error();
   }
   const data = url.substring(i + 1);
   let prefix = url.substring(5, i);

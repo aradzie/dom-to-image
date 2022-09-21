@@ -1,6 +1,6 @@
 import { joinCssUrls, splitCssUrls } from "@sosimple/cssurl";
 import { assets } from "./assets.js";
-import { formatDataUrl, isDataUrl } from "./dataurl.js";
+import { formatDataUrl, isDataUrl, parseDataUrl } from "./dataurl.js";
 import { readBlobAsDataUrl } from "./util.js";
 
 export async function inlineUrls(cssText: string): Promise<string> {
@@ -11,7 +11,9 @@ export async function inlineUrls(cssText: string): Promise<string> {
       const { url } = piece;
       if (!isDataUrl(url)) {
         const blob = await assets.load(url);
-        const { mimeType, encoding, data } = await readBlobAsDataUrl(blob);
+        const { mimeType, encoding, data } = parseDataUrl(
+          await readBlobAsDataUrl(blob),
+        );
         piece.url = formatDataUrl({
           mimeType: assets.getMimeType(url, mimeType),
           encoding,
@@ -28,7 +30,9 @@ export async function inlineImage(element: HTMLImageElement): Promise<void> {
   const url = element.src;
   if (!isDataUrl(url)) {
     const blob = await assets.load(url);
-    const { mimeType, encoding, data } = await readBlobAsDataUrl(blob);
+    const { mimeType, encoding, data } = parseDataUrl(
+      await readBlobAsDataUrl(blob),
+    );
     const dataUrl = formatDataUrl({
       mimeType: assets.getMimeType(url, mimeType),
       encoding,

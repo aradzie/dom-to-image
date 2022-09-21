@@ -1,5 +1,4 @@
 import { assets } from "./assets.js";
-import { DataUrl, parseDataUrl } from "./dataurl.js";
 
 export const toElement = (selector: Element | string): Element => {
   if (typeof selector === "string") {
@@ -53,11 +52,11 @@ export const canvasToBlob = (
   });
 };
 
-export const readBlobAsDataUrl = (body: Blob): Promise<DataUrl> => {
+export const readBlobAsDataUrl = (body: Blob): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
-      resolve(parseDataUrl(reader.result as string));
+      resolve(reader.result as string);
     };
     reader.onerror = () => {
       reject(new Error("readBlobAsDataUrl"));
