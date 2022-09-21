@@ -2,7 +2,7 @@ import test from "ava";
 import { Cloner } from "./cloner.js";
 import { loadHtml } from "./test/browser-env.js";
 
-test("clone", async (t) => {
+test.serial("clone", async (t) => {
   // Arrange.
 
   const cleanup = loadHtml(`
@@ -27,7 +27,7 @@ test("clone", async (t) => {
   cleanup();
 });
 
-test("clone with filter on root", async (t) => {
+test.serial("clone with filter on root", async (t) => {
   // Arrange.
 
   const cleanup = loadHtml(`
@@ -50,7 +50,7 @@ test("clone with filter on root", async (t) => {
   cleanup();
 });
 
-test("clone with filter", async (t) => {
+test.serial("clone with filter", async (t) => {
   // Arrange.
 
   const cleanup = loadHtml(`
@@ -77,7 +77,7 @@ test("clone with filter", async (t) => {
   cleanup();
 });
 
-test("clone with replacer on root", async (t) => {
+test.serial("clone with replacer on root", async (t) => {
   // Arrange.
 
   const cleanup = loadHtml(`
@@ -108,7 +108,7 @@ test("clone with replacer on root", async (t) => {
   cleanup();
 });
 
-test("clone with replacer", async (t) => {
+test.serial("clone with replacer", async (t) => {
   // Arrange.
 
   const cleanup = loadHtml(`

@@ -22,12 +22,14 @@ export function* scanUrls(text: string): Generator<UrlMatch> {
     UBody, // unquoted body
   }
 
+  const { length } = text;
+
   let state = State.Initial;
   let index = 0;
   let start = 0;
   let end = 0;
   let quot = 0;
-  const { length } = text;
+
   while (index < length) {
     if (state === State.Initial) {
       const i = text.indexOf("url", index);

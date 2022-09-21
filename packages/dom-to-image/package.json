@@ -1,0 +1,45 @@
+{
+  "name": "@sosimple/dom-to-image",
+  "version": "0.1.0",
+  "description": "Generates an image from a DOM node using HTML5 canvas and SVG.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "module": "lib-esm/index.js",
+  "dependencies": {
+    "@sosimple/cssurl": "*",
+    "tslib": "^2.4.0"
+  },
+  "scripts": {
+    "precompile": "rm -fr lib && rm -fr lib-esm",
+    "compile": "tsc -b tsconfig.json && tsc -b tsconfig-esm.json",
+    "test": "ava"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aradzie/dom-to-image.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aradzie/dom-to-image/issues"
+  },
+  "homepage": "https://github.com/aradzie/dom-to-image#readme",
+  "author": "Aliaksandr Radzivanovich <aradzivanovich@gmail.com>",
+  "keywords": [
+    "dom",
+    "raster",
+    "render",
+    "canvas",
+    "screenshot"
+  ],
+  "ava": {
+    "typescript": {
+      "rewritePaths": {
+        "src/": "lib/"
+      },
+      "compile": false
+    },
+    "files": [
+      "src/**/*.test.ts"
+    ]
+  }
+}

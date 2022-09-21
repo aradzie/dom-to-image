@@ -1,5 +1,5 @@
 import test from "ava";
-import { scanUrls } from "./cssurl.js";
+import { scanUrls } from "./scan.js";
 
 test("scanUrls", (t) => {
   t.deepEqual([...scanUrls(``)], []);

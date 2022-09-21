@@ -1,61 +1,27 @@
 {
-  "name": "@sosimple/dom-to-image",
-  "version": "0.1.0",
-  "description": "Generates an image from a DOM node using HTML5 canvas and SVG.",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "module": "lib-esm/index.js",
-  "dependencies": {
-    "tslib": "^2.4.0"
-  },
+  "private": true,
+  "name": "root",
   "devDependencies": {
     "@ava/typescript": "^3.0.1",
     "@types/node": "^18.7.18",
-    "@typescript-eslint/eslint-plugin": "^5.37.0",
-    "@typescript-eslint/parser": "^5.37.0",
+    "@typescript-eslint/eslint-plugin": "^5.38.0",
+    "@typescript-eslint/parser": "^5.38.0",
     "ava": "^4.3.3",
     "eslint": "^8.23.1",
     "eslint-plugin-ava": "^13.2.0",
     "eslint-restricted-globals": "^0.2.0",
     "jsdom": "^20.0.0",
+    "lerna": "^5.5.2",
     "prettier": "^2.7.1",
     "typescript": "^4.8.3"
   },
   "scripts": {
-    "precompile": "rm -fr lib && rm -fr lib-esm",
-    "compile": "tsc -b tsconfig.json && tsc -b tsconfig-esm.json",
-    "test": "ava",
-    "lint": "eslint src --ext .ts",
-    "lint-fix": "eslint src --ext .ts --fix",
-    "format": "prettier --write 'src/**/*.ts'"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/aradzie/dom-to-image.git"
-  },
-  "bugs": {
-    "url": "https://github.com/aradzie/dom-to-image/issues"
-  },
-  "homepage": "https://github.com/aradzie/dom-to-image#readme",
-  "author": "Aliaksandr Radzivanovich <aradzivanovich@gmail.com>",
-  "keywords": [
-    "dom",
-    "raster",
-    "render",
-    "canvas",
-    "screenshot"
-  ],
-  "ava": {
-    "typescript": {
-      "rewritePaths": {
-        "src/": "lib/"
-      },
-      "compile": false
-    },
-    "files": [
-      "src/**/*.test.ts"
-    ],
-    "serial": true
+    "postinstall": "lerna bootstrap",
+    "clean": "lerna run clean",
+    "compile": "lerna run compile",
+    "test": "lerna run test",
+    "lint": "eslint packages --ext .ts,.tsx",
+    "lint-fix": "eslint packages --ext .ts,.tsx --fix",
+    "format": "prettier '**/*.{ts,tsx,css,json}' --write"
   }
 }

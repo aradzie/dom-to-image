@@ -3,11 +3,10 @@
   "extends": "./tsconfig-template.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "lib",
-    "module": "commonjs",
+    "outDir": "lib-esm",
+    "module": "es2020",
     "moduleResolution": "node"
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["**/test/*", "**/*.test.*"]
 }

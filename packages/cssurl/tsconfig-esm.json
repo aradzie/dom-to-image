@@ -7,11 +7,6 @@
     "module": "es2020",
     "moduleResolution": "node"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "**/test/*",
-    "**/*.test.*"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["**/test/*", "**/*.test.*"]
 }

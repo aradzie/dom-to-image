@@ -1,11 +1,8 @@
 {
   "private": true,
   "name": "example",
-  "version": "1.0.0",
-  "description": "Example project",
-  "main": "lib/index.js",
   "dependencies": {
-    "@sosimple/dom-to-image": "../",
+    "@sosimple/dom-to-image": "*",
     "clsx": "^1.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -24,6 +21,6 @@
   },
   "scripts": {
     "prebuild": "rm -fr build",
-    "build": "env NODE_ENV=development webpack"
+    "compile": "env NODE_ENV=development webpack"
   }
 }
