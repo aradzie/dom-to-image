@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "example",
+  "name": "@sosimple/dom-to-image-example",
   "dependencies": {
     "@sosimple/dom-to-image": "*",
     "clsx": "^1.2.1",

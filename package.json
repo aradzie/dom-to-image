@@ -22,6 +22,7 @@
     "test": "lerna run test",
     "lint": "eslint packages --ext .ts,.tsx",
     "lint-fix": "eslint packages --ext .ts,.tsx --fix",
-    "format": "prettier '**/*.{ts,tsx,css,json}' --write"
+    "format": "prettier '**/*.{ts,tsx,css,json}' --write",
+    "publish": "lerna run compile && lerna publish"
   }
 }

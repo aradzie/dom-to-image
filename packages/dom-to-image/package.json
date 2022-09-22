@@ -9,6 +9,9 @@
     "@sosimple/cssurl": "*",
     "tslib": "^2.4.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "precompile": "rm -fr lib && rm -fr lib-esm",
     "compile": "tsc -b tsconfig.json && tsc -b tsconfig-esm.json",
