@@ -2,7 +2,15 @@ import { inlineImage, inlineUrls } from "./inline.js";
 import { Options } from "./types.js";
 import { makeImage } from "./util.js";
 
-const unsupported = new Set(["IFRAME", "OBJECT", "EMBED", "VIDEO", "AUDIO"]);
+const unsupported = new Set([
+  "STYLE",
+  "SCRIPT",
+  "IFRAME",
+  "OBJECT",
+  "EMBED",
+  "VIDEO",
+  "AUDIO",
+]);
 
 export class Cloner {
   /** The mapping from elements to their clones */
