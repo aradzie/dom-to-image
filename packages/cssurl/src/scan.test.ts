@@ -20,21 +20,23 @@ test("scanUrls", (t) => {
   t.deepEqual([...scanCssUrls(`url("image.png"`)], []);
   t.deepEqual([...scanCssUrls(`url("image.png')`)], []);
   t.deepEqual([...scanCssUrls(`url('image.png")`)], []);
+  t.deepEqual([...scanCssUrls(`url('\nimage.png\n')`)], []);
+  t.deepEqual([...scanCssUrls(`url (image.png)`)], []);
   t.deepEqual(
     [...scanCssUrls(`url(image.png)`)],
     [{ index: 0, length: 14, url: "image.png" }],
   );
   t.deepEqual(
-    [...scanCssUrls(`src:url ( image.png ); `)],
-    [{ index: 4, length: 17, url: "image.png" }],
+    [...scanCssUrls(`src:url( image.png ); `)],
+    [{ index: 4, length: 16, url: "image.png" }],
   );
   t.deepEqual(
-    [...scanCssUrls(`src:url ( 'image.png' ); `)],
-    [{ index: 4, length: 19, url: "image.png" }],
+    [...scanCssUrls(`src:url( 'image.png' ); `)],
+    [{ index: 4, length: 18, url: "image.png" }],
   );
   t.deepEqual(
-    [...scanCssUrls(`src:url ( "image.png" ); `)],
-    [{ index: 4, length: 19, url: "image.png" }],
+    [...scanCssUrls(`src:url( "image.png" ); `)],
+    [{ index: 4, length: 18, url: "image.png" }],
   );
   t.deepEqual(
     [...scanCssUrls(`src:url(image1.png),url(image2.png); `)],

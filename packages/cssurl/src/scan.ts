@@ -8,8 +8,6 @@ export type UrlMatch = {
 
 export function* scanCssUrls(cssText: string): Generator<UrlMatch> {
   const enum CharCode {
-    Slash = /* "/" */ 0x002f,
-    Star = /* "*" */ 0x002a,
     LParen = /* "(" */ 0x0028,
     RParen = /* ")" */ 0x0029,
     SQuote = /* `'` */ 0x0027,
@@ -18,11 +16,11 @@ export function* scanCssUrls(cssText: string): Generator<UrlMatch> {
 
   const enum State {
     Initial,
-    Url, // after "url"
-    Paren, // after "("
-    QBody, // after opening ' or "
-    UBody, // unquoted body
-    BodyEnd, // unquoted body end
+    Url,
+    Paren,
+    QBody,
+    UBody,
+    BodyEnd,
   }
 
   const { length } = cssText;
@@ -48,17 +46,13 @@ export function* scanCssUrls(cssText: string): Generator<UrlMatch> {
 
     const charCode = cssText.charCodeAt(index);
 
+    const isLinebreak =
+      charCode === 0x000a || charCode === 0x000d || charCode === 0x000c;
     const isWhitespace =
-      charCode === 0x0020 ||
-      charCode === 0x0009 ||
-      charCode === 0x000a ||
-      charCode === 0x000d;
+      charCode === 0x0020 || charCode === 0x0009 || isLinebreak;
 
     switch (state) {
       case State.Url:
-        if (isWhitespace) {
-          break;
-        }
         if (charCode === CharCode.LParen) {
           state = State.Paren;
           break;
@@ -84,6 +78,10 @@ export function* scanCssUrls(cssText: string): Generator<UrlMatch> {
         bodyStart = index;
         break;
       case State.QBody:
+        if (isLinebreak) {
+          state = State.Initial;
+          break;
+        }
         if (charCode === quot) {
           state = State.BodyEnd;
           bodyEnd = index;
