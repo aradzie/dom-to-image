@@ -7,10 +7,10 @@ test("parse", (t) => {
     encoding: "ascii",
     data: "",
   });
-  t.deepEqual(parseDataUrl("data:,abc"), {
+  t.deepEqual(parseDataUrl("data:,%20abc%20"), {
     mimeType: "text/plain",
     encoding: "ascii",
-    data: "abc",
+    data: " abc ",
   });
 
   // with mime type
@@ -20,10 +20,10 @@ test("parse", (t) => {
     encoding: "ascii",
     data: "",
   });
-  t.deepEqual(parseDataUrl("data:text/html,abc"), {
+  t.deepEqual(parseDataUrl("data:text/html,%20abc%20"), {
     mimeType: "text/html",
     encoding: "ascii",
-    data: "abc",
+    data: " abc ",
   });
 
   // with encoding
@@ -33,10 +33,10 @@ test("parse", (t) => {
     encoding: "base64",
     data: "",
   });
-  t.deepEqual(parseDataUrl("data:;base64,abc"), {
+  t.deepEqual(parseDataUrl("data:;base64,YWJj"), {
     mimeType: "text/plain",
     encoding: "base64",
-    data: "abc",
+    data: "YWJj",
   });
 
   // with mime type and encoding
@@ -46,10 +46,10 @@ test("parse", (t) => {
     encoding: "base64",
     data: "",
   });
-  t.deepEqual(parseDataUrl("data:text/html;base64,abc"), {
+  t.deepEqual(parseDataUrl("data:text/html;base64,YWJj"), {
     mimeType: "text/html",
     encoding: "base64",
-    data: "abc",
+    data: "YWJj",
   });
 });
 
@@ -62,9 +62,9 @@ test("format", (t) => {
   );
   t.is(
     formatDataUrl({
-      data: "abc",
+      data: "%abc%",
     }),
-    "data:,abc",
+    "data:,%25abc%25",
   );
 
   // with mimeType
@@ -79,9 +79,9 @@ test("format", (t) => {
   t.is(
     formatDataUrl({
       mimeType: "text/plain",
-      data: "abc",
+      data: "%abc%",
     }),
-    "data:,abc",
+    "data:,%25abc%25",
   );
   t.is(
     formatDataUrl({
@@ -93,9 +93,9 @@ test("format", (t) => {
   t.is(
     formatDataUrl({
       mimeType: "text/html",
-      data: "abc",
+      data: "%abc%",
     }),
-    "data:text/html,abc",
+    "data:text/html,%25abc%25",
   );
 
   // with encoding
@@ -110,9 +110,9 @@ test("format", (t) => {
   t.is(
     formatDataUrl({
       encoding: "base64",
-      data: "abc",
+      data: "YWJj",
     }),
-    "data:;base64,abc",
+    "data:;base64,YWJj",
   );
 
   // with mimeType and encoding
@@ -129,8 +129,17 @@ test("format", (t) => {
     formatDataUrl({
       mimeType: "image/png",
       encoding: "base64",
-      data: "abc",
+      data: "YWJj",
     }),
-    "data:image/png;base64,abc",
+    "data:image/png;base64,YWJj",
   );
+});
+
+test("format then parse", (t) => {
+  const data = " \n~!@#$%^&*()_+ data";
+  t.deepEqual(parseDataUrl(formatDataUrl({ data })), {
+    mimeType: "text/plain",
+    encoding: "ascii",
+    data,
+  });
 });

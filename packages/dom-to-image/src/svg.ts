@@ -1,6 +1,6 @@
 import { Cloner } from "./cloner.js";
+import { formatDataUrl } from "./dataurl.js";
 import { Options } from "./types.js";
-import { escapeUrlData, formatDataUrl } from "./dataurl.js";
 
 const nsXhtml = "http://www.w3.org/1999/xhtml";
 const nsSvg = "http://www.w3.org/2000/svg";
@@ -22,7 +22,7 @@ export async function toSvgDataUrl(
   await cloner.inlineFonts();
   await cloner.copyStyles();
   style.appendChild(document.createTextNode(cloner.getStyleText()));
-  const data = escapeUrlData(new XMLSerializer().serializeToString(svg));
+  const data = new XMLSerializer().serializeToString(svg);
   return formatDataUrl({ mimeType: "image/svg+xml", data });
 }
 
