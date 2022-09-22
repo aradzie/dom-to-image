@@ -9,7 +9,7 @@ test("inline urls", async (t) => {
   const cleanup = loadHtml(`<html></html>`);
 
   (assets as any).load = (url: string): Promise<Blob> => {
-    return Promise.resolve(new Blob([url], { type: "image/png" }));
+    return Promise.resolve(new Blob([url], { type: "application/font-woff" }));
   };
 
   // Act.

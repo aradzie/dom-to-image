@@ -1,6 +1,6 @@
 import { joinCssUrls, splitCssUrls } from "@sosimple/cssurl";
 import { assets } from "./assets.js";
-import { formatDataUrl, isDataUrl, parseDataUrl } from "./dataurl.js";
+import { isDataUrl } from "./dataurl.js";
 import { readBlobAsDataUrl } from "./util.js";
 
 export async function inlineUrls(cssText: string): Promise<string> {
@@ -11,7 +11,8 @@ export async function inlineUrls(cssText: string): Promise<string> {
       const { url } = piece;
       if (!isDataUrl(url)) {
         const blob = await assets.load(url);
-        piece.url = await fixMimeType(url, blob);
+        const dataUrl = await readBlobAsDataUrl(blob);
+        piece.url = dataUrl;
         updated = true;
       }
     }
@@ -20,10 +21,10 @@ export async function inlineUrls(cssText: string): Promise<string> {
 }
 
 export async function inlineImage(element: HTMLImageElement): Promise<void> {
-  let url = element.src;
+  const url = element.src;
   if (!isDataUrl(url)) {
     const blob = await assets.load(url);
-    url = await fixMimeType(url, blob);
+    const dataUrl = await readBlobAsDataUrl(blob);
     return new Promise((resolve, reject) => {
       element.onload = () => {
         resolve();
@@ -31,17 +32,7 @@ export async function inlineImage(element: HTMLImageElement): Promise<void> {
       element.onerror = () => {
         reject(new Error(`Cannot load image [${url}].`));
       };
-      element.src = url;
+      element.src = dataUrl;
     });
   }
-}
-
-async function fixMimeType(url: string, blob: Blob): Promise<string> {
-  const dataUrl = await readBlobAsDataUrl(blob);
-  const { mimeType, encoding, data } = parseDataUrl(dataUrl);
-  return formatDataUrl({
-    mimeType: assets.getMimeType(url, mimeType),
-    encoding,
-    data,
-  });
 }

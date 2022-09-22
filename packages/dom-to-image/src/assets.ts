@@ -19,6 +19,7 @@ export namespace assets {
 
   export let options: Options = {
     cache: "force-cache",
+    redirect: "follow",
   };
 
   /**
@@ -47,10 +48,7 @@ export namespace assets {
    * @return A promise with the asset content.
    */
   export const load: Loader = async (url) => {
-    const response = await fetch(url, {
-      ...getRequest(url),
-      method: "get",
-    });
+    const response = await fetch(url, { method: "get", ...getRequest(url) });
     if (response.ok) {
       return await response.blob();
     } else {
@@ -58,46 +56,5 @@ export namespace assets {
         `Cannot load asset [${url}]: ${response.status} ${response.statusText}`,
       );
     }
-  };
-
-  export const mimeTypes: Record<string, string> = {
-    gif: "image/gif",
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    png: "image/png",
-    svg: "image/svg+xml",
-    tiff: "image/tiff",
-    ttf: "application/font-truetype",
-    woff: "application/font-woff",
-    woff2: "application/font-woff",
-  };
-
-  export const parsePathExt = (url: string): string => {
-    let i;
-    i = url.indexOf("#");
-    if (i !== -1) {
-      url = url.substring(0, i);
-    }
-    i = url.indexOf("?");
-    if (i !== -1) {
-      url = url.substring(0, i);
-    }
-    i = url.lastIndexOf(".");
-    if (i !== -1) {
-      return url.substring(i + 1).toLowerCase();
-    } else {
-      return "";
-    }
-  };
-
-  export const getMimeType = (
-    url: string,
-    defaultMimeType: string | null = null,
-  ): string => {
-    return (
-      mimeTypes[parsePathExt(url)] ??
-      defaultMimeType ??
-      "application/octet-stream"
-    );
   };
 }
