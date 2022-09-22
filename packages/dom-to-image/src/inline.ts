@@ -11,14 +11,7 @@ export async function inlineUrls(cssText: string): Promise<string> {
       const { url } = piece;
       if (!isDataUrl(url)) {
         const blob = await assets.load(url);
-        const { mimeType, encoding, data } = parseDataUrl(
-          await readBlobAsDataUrl(blob),
-        );
-        piece.url = formatDataUrl({
-          mimeType: assets.getMimeType(url, mimeType),
-          encoding,
-          data,
-        });
+        piece.url = await fixMimeType(url, blob);
         updated = true;
       }
     }
@@ -27,17 +20,10 @@ export async function inlineUrls(cssText: string): Promise<string> {
 }
 
 export async function inlineImage(element: HTMLImageElement): Promise<void> {
-  const url = element.src;
+  let url = element.src;
   if (!isDataUrl(url)) {
     const blob = await assets.load(url);
-    const { mimeType, encoding, data } = parseDataUrl(
-      await readBlobAsDataUrl(blob),
-    );
-    const dataUrl = formatDataUrl({
-      mimeType: assets.getMimeType(url, mimeType),
-      encoding,
-      data,
-    });
+    url = await fixMimeType(url, blob);
     return new Promise((resolve, reject) => {
       element.onload = () => {
         resolve();
@@ -45,7 +31,17 @@ export async function inlineImage(element: HTMLImageElement): Promise<void> {
       element.onerror = () => {
         reject(new Error(`Cannot load image [${url}].`));
       };
-      element.src = dataUrl;
+      element.src = url;
     });
   }
+}
+
+async function fixMimeType(url: string, blob: Blob): Promise<string> {
+  const dataUrl = await readBlobAsDataUrl(blob);
+  const { mimeType, encoding, data } = parseDataUrl(dataUrl);
+  return formatDataUrl({
+    mimeType: assets.getMimeType(url, mimeType),
+    encoding,
+    data,
+  });
 }
